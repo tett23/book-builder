@@ -1,7 +1,7 @@
 SHELL = /bin/sh
 .DEFAULT_GOAL := all
 
-required_commands := node pnpm deno
+required_commands := deno
 
 .PHONY: doctor
 doctor:
