@@ -43,4 +43,4 @@ fmt:
 
 .PHONY: test
 test:
-	@deno test
+	@deno test --allow-read
