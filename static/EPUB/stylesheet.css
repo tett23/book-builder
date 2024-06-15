@@ -1,0 +1,45 @@
+
+html, body {
+line-break: strict;
+writing-mode: vertical-rl;
+-epub-writing-mode: vertical-rl;
+-webkit-writing-mode: vertical-rl;
+}
+
+#main {
+  display: block;
+  line-height: 125%;
+  text-align: justify;
+  padding: 0;
+  margin: 0 5pt;
+
+  writing-mode: vertical-rl;
+  -epub-writing-mode: vertical-rl;
+  -webkit-writing-mode: vertical-rl;
+  line-break: strict;
+  -epub-line-break: strict;
+  -webkit-line-break: strict;
+}
+br {
+  line-height: 1.7em;
+  word-break: break-all;
+}
+p {
+  display: block;
+  margin: 0;
+  border: none;
+  padding: 0;
+  line-height: 1.7em;
+  word-break: break-all;
+}
+hr {
+  margin: 0 2em;
+}
+ruby > rt {
+  font-size: 0.33em !important;
+  text-align: start;
+}
+/* NOTE: 行頭に0.5emインデント */
+.ih {
+  text-indent: 0.5em;
+}

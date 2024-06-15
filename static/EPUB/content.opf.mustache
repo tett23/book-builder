@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package
+    version="3.0"
+    xmlns="http://www.idpf.org/2007/opf"
+    unique-identifier="unique-id"
+    prefix="ebpaj: http://www.ebpaj.jp/">
+    <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
+        <dc:identifier id="unique-id">{{bookInfo.uniqueId}}</dc:identifier>
+        <dc:title>{{title}}</dc:title>
+        <dc:language>{{bookInfo.language}}</dc:language>
+        <meta property="dcterms:modified">{{bookInfo.modifiedAt}}</meta>
+
+        <dc:creator id="creator01">{{author}}</dc:creator>
+        <meta refines="#creator01" property="role" scheme="marc:relators">aut</meta>
+        <meta refines="#creator01" property="file-as">{{author}}</meta>
+        <meta refines="#creator01" property="display-seq">1</meta>
+
+        <meta property="ebpaj:guide-version">{{bookInfo.version}}</meta>
+    </metadata>
+
+    <manifest>
+        <item id="nav" href="html/nav.xhtml" properties="nav" media-type="application/xhtml+xml" />
+        <item href="page.css" id="page_css" media-type="text/css" />
+        <item href="stylesheet.css" id="css" media-type="text/css" />
+        {{#index}}
+        <item id="{{id}}" href="html/{{id}}.xhtml" media-type="application/xhtml+xml" />
+        {{/index}}
+    </manifest>
+
+    <spine page-progression-direction="{{bookInfo.pageProgressionDirection}}">
+        <itemref idref="nav" />
+        {{#index}}
+        <itemref idref="{{id}}" />
+        {{/index}}
+    </spine>
+</package>

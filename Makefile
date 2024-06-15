@@ -17,11 +17,14 @@ all: doctor ci build
 
 .PHONY: build
 build: clean
-	@deno compile --config ./tsconfig.json --unstable --allow-read --allow-write --allow-env --output dist/book-builder main.ts
+	@deno task embed
+	@deno compile --config ./tsconfig.json --allow-read --allow-write --allow-env --allow-sys --output dist/book-builder --import-map=deno.json main.ts
 	@chmod +x dist/book-builder
 
+.PHONY: install
 install: ci
-	@deno install --config ./tsconfig.json --unstable --allow-read --allow-write --allow-env --name book-builder main.ts
+	@deno task embed
+	@deno install --config ./tsconfig.json --allow-read --allow-write --allow-env --allow-sys --name book-builder --import-map=deno.json -g -f main.ts
 
 .PHONY: clean
 clean:

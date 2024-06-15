@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="ja" lang="ja" class="vrtl">
+  <head>
+    <title>{{title}}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link href="../stylesheet.css" rel="stylesheet" type="text/css"/>
+    <link href="../page.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body id="main">
+    <h2>{{title}}</h2>
+
+    <p>Author {{author}}</p>
+    <p>CreatedAt {{bookInfo.modifiedAt}}</p>
+
+    <nav id="toc" xmlns:epub="http://www.idpf.org/2007/ops" epub:type="toc">
+      <ol style="list-style-type: none; line-height: 1.66em;">
+        {{#index}}
+          <li><a href="{{id}}.xhtml">{{title}}</a></li>
+        {{/index}}
+      </ol>
+    </nav>
+    <p class="pagebreak"></p>
+  </body>
+</html>

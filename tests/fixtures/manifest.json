@@ -1,0 +1,9 @@
+{
+  "title": "Binary Predicate",
+  "id": "binary-predicate",
+  "author": "川井",
+  "index": [
+    { "type": "chapter", "title": "1", "src": "./1.md" },
+    { "type": "section", "title": "1", "src": "./1.md" }
+  ]
+}
