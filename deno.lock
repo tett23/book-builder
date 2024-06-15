@@ -32,7 +32,8 @@
       "npm:remark@13.0.0": "npm:remark@13.0.0",
       "npm:remark@15.0.1": "npm:remark@15.0.1",
       "npm:unified@11.0.4": "npm:unified@11.0.4",
-      "npm:unionfs@4.5.4": "npm:unionfs@4.5.4"
+      "npm:unionfs@4.5.4": "npm:unionfs@4.5.4",
+      "npm:unist-util-remove@4": "npm:unist-util-remove@4.0.0"
     },
     "jsr": {
       "@cliffy/command@1.0.0-rc.4": {
@@ -1040,6 +1041,14 @@
         "integrity": "sha512-fucsC7HjXvkB5R3kTCO7kUjRdrS0BJt3M/FPxmHMBOm8JQi2BsHAHFsy27E0EolP8rp0NzXsJ+jNPyDWvOJZPA==",
         "dependencies": {
           "@types/unist": "@types/unist@3.0.2"
+        }
+      },
+      "unist-util-remove@4.0.0": {
+        "integrity": "sha512-b4gokeGId57UVRX/eVKej5gXqGlc9+trkORhFJpu9raqZkZhU0zm8Doi05+HaiBsMEIJowL+2WtQ5ItjsngPXg==",
+        "dependencies": {
+          "@types/unist": "@types/unist@3.0.2",
+          "unist-util-is": "unist-util-is@6.0.0",
+          "unist-util-visit-parents": "unist-util-visit-parents@6.0.1"
         }
       },
       "unist-util-stringify-position@2.0.3": {

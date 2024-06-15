@@ -42,3 +42,23 @@ m*`),
     "<p><em>e\nm</em></p>",
   );
 });
+
+Deno.test(async function remarkParagraphBreask() {
+  assertEquals(
+    await parser(`
+`),
+    "",
+  );
+});
+
+Deno.test(async function remarkParagraphBreask() {
+  assertEquals(
+    await parser(`
+1
+
+
+2
+`),
+    "<p>1</p>\n<p>2</p>",
+  );
+});
