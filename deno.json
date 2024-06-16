@@ -1,7 +1,7 @@
 {
   "tasks": {
     "embed": "deno run -A embedder.ts build",
-    "dev": "deno task embed && deno run --allow-read --allow-write --allow-env --allow-sys main.ts --manifest tests/fixtures/manifest.json"
+    "dev": "deno task embed && deno run --allow-read --allow-write --allow-env --allow-sys --config=deno.json main.ts --manifest tests/fixtures/manifest.json"
   },
   "imports": {
     "@std/jsonc": "jsr:@std/jsonc@^0.224.0",

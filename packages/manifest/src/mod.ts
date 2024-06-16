@@ -24,7 +24,8 @@ const Manifest = z.object({
   bookInfo: z.object({
     uniqueId: z.string().default(`urn:uuid${crypto.randomUUID()}`),
     language: z.string().default("ja-JP"),
-    pageProgressionDirection: z.union([z.literal("ltr"), z.literal("rtl")]),
+    pageProgressionDirection: z.union([z.literal("ltr"), z.literal("rtl")])
+      .default("rtl"),
     modified: z.string().default(new Date().toISOString()),
     version: z.string().default("0.0.0"),
   }).default({
@@ -34,12 +35,13 @@ const Manifest = z.object({
     modified: new Date().toISOString(),
     version: "0.0.0",
   }),
+  output: z.string().optional(),
 });
 
 export type Manifest = z.infer<typeof Manifest>;
 
 export function parse(
   source: string,
-): z.SafeParseReturnType<Manifest, Manifest> {
-  return Manifest.safeParse(jsoncParse(source));
+): Manifest {
+  return Manifest.parse(jsoncParse(source));
 }

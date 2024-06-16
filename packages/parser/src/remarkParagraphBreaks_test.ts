@@ -1,5 +1,5 @@
 import { assertEquals } from "https://deno.land/std@0.204.0/assert/mod.ts";
-import { parser } from "./index.ts";
+import { parser } from "./mod.ts";
 
 Deno.test(async function remarkParagraphBreask() {
   assertEquals(

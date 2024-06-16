@@ -18,17 +18,26 @@ all: doctor ci build
 .PHONY: build
 build: clean
 	@deno task embed
-	@deno compile --config ./tsconfig.json --allow-read --allow-write --allow-env --allow-sys --output dist/book-builder --import-map=deno.json main.ts
+	@deno compile --config deno.json --allow-read --allow-write --allow-env --allow-sys --output dist/book-builder main.ts
 	@chmod +x dist/book-builder
 
 .PHONY: install
 install: ci
 	@deno task embed
-	@deno install --config ./tsconfig.json --allow-read --allow-write --allow-env --allow-sys --name book-builder --import-map=deno.json -g -f main.ts
+	@deno install --config ./deno.json --allow-read --allow-write --allow-env --allow-sys --name book-builder -g -f main.ts
+
+tmp:
+	@mkdir -p tmp
+
+.PHONY: install
+dev: tmp
+	@deno task embed
+	@deno install --config ./deno.json --allow-read --allow-write --allow-env --allow-sys --name book-builder -g -f main.ts
 
 .PHONY: clean
 clean:
-	@rm dist/book-builder || true
+	@rm -rf tmp || true
+	@rm -rf dist || true
 
 .PHONY: ci
 ci: lint fmt test

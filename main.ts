@@ -1,8 +1,8 @@
-import { parser } from "./packages/parser/src/index.ts";
+import { parser } from "./packages/parser/src/mod.ts";
 import {
   Manifest,
   parse as manifestParaser,
-} from "./packages/manifest/src/index.ts";
+} from "./packages/manifest/src/mod.ts";
 import { parseArgs } from "node:util";
 import { Volume } from "npm:memfs@4.9.2";
 import rfs from "node:fs";
@@ -33,16 +33,16 @@ const pfs: typeof rfs = Volume.fromJSON({}) as never;
 const ufs = new Union();
 const fs: typeof rfs = ufs.use(pfs).use(rfs) as never;
 
-const manifest = manifestParaser(fs.readFileSync(argv.manifest, "utf8"));
-if (!manifest.success) {
-  console.error(manifest.error);
-  Deno.exit(1);
-}
+const manifest = manifestParaser(
+  await fs.promises.readFile(argv.manifest, "utf8").catch(() => {
+    return fs.readFileSync("manifest.jsonc", "utf8");
+  }),
+);
 
 Deno.chdir(dirname(argv.manifest));
 pfs.mkdirSync(Deno.cwd(), { recursive: true });
 
-const ps = manifest.data.index.map(async (
+const ps = manifest.index.map(async (
   item,
 ): Promise<[UnwrapArray<Manifest["index"]>, string]> =>
   [item, await parser(fs.readFileSync(item.src, "utf8"))] as const
@@ -134,8 +134,7 @@ async function zip(
   await files.reduce(
     async (acc: Promise<unknown>, [path, content]) => {
       await acc;
-      const reader = new TextReader(content);
-      await writer.add(path, reader);
+      await writer.add(path, new TextReader(content), { keepOrder: true });
     },
     Promise.resolve(),
   );
@@ -144,12 +143,16 @@ async function zip(
   return zipFileWriter.getData();
 }
 
-const book = fromManifestAndContent(manifest.data, contents);
+const book = fromManifestAndContent(manifest, contents);
 
 const file = await zip(await compile(book));
 const ab = await file.arrayBuffer();
 
+fs.promises.mkdir(
+  dirname((manifest.output ?? `${manifest.title}.epub`) + "tmp"),
+  { recursive: true },
+);
 rfs.writeFileSync(
-  "book.epub",
+  manifest.output ?? `${manifest.title}.epub`,
   new Uint8Array(ab),
 );
