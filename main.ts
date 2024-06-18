@@ -1,3 +1,4 @@
+import "npm:@types/node";
 import { parser } from "./packages/parser/src/mod.ts";
 import {
   Manifest,
@@ -19,8 +20,7 @@ import {
 
 const { values: parsed } = parseArgs({
   args: Deno.args,
-  allowPositional: true,
-  strict: false,
+  allowPositionals: true,
   options: {
     manifest: { type: "string", short: "m" },
   },
