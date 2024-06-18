@@ -8,5 +8,5 @@
   "bookInfo": {
     "uniqueId": "test"
   },
-  "output": "../..//tmp/test.epub"
+  "output": "../../tmp/test.epub"
 }

@@ -1,4 +1,3 @@
-import "npm:@types/node";
 import { parser } from "./packages/parser/src/mod.ts";
 import {
   Manifest,
@@ -28,26 +27,28 @@ const { values: parsed } = parseArgs({
 const argv = z.object({
   manifest: z.string().default("manifest.json"),
 }).parse(parsed);
+Deno.chdir(dirname(argv.manifest));
 
 const pfs: typeof rfs = Volume.fromJSON({}) as never;
 const ufs = new Union();
 const fs: typeof rfs = ufs.use(pfs).use(rfs) as never;
 
-const manifest = manifestParaser(
-  await fs.promises.readFile(argv.manifest, "utf8").catch(() => {
-    return fs.readFileSync("manifest.jsonc", "utf8");
-  }),
-);
+const [manifestFile] = (await Promise.all([
+  fs.promises.readFile(argv.manifest, "utf8").catch(() => undefined),
+  fs.promises.readFile("manifest.jsonc", "utf8").catch(() => undefined),
+  fs.promises.readFile("manifest.json", "utf8").catch(() => undefined),
+])).filter(Boolean);
+if (manifestFile == null) {
+  console.error("manifest file not found");
+  Deno.exit(1);
+}
+const manifest = manifestParaser(manifestFile);
 
-Deno.chdir(dirname(argv.manifest));
-pfs.mkdirSync(Deno.cwd(), { recursive: true });
-
-const ps = manifest.index.map(async (
+const contents = await Promise.all(manifest.index.map(async (
   item,
 ): Promise<[UnwrapArray<Manifest["index"]>, string]> =>
   [item, await parser(fs.readFileSync(item.src, "utf8"))] as const
-);
-const contents = await Promise.all(ps);
+));
 
 type Book = {
   title: string;
@@ -144,12 +145,11 @@ async function zip(
 }
 
 const book = fromManifestAndContent(manifest, contents);
-
 const file = await zip(await compile(book));
 const ab = await file.arrayBuffer();
 
 fs.promises.mkdir(
-  dirname((manifest.output ?? `${manifest.title}.epub`) + "tmp"),
+  dirname(manifest.output ?? `${manifest.title}.epub`),
   { recursive: true },
 );
 rfs.writeFileSync(
