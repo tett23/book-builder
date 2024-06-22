@@ -8,7 +8,6 @@ import {
 } from "https://deno.land/x/zipjs@v2.7.45/index.js";
 import Handlebars from "handlebars";
 import fs from "node:fs";
-import { dirname } from "node:path";
 
 type Book = {
   title: string;
