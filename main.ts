@@ -94,14 +94,14 @@ function compile(book: Book): Promise<[string, string][]> {
     copyFile("EPUB/stylesheet.css"),
     compileTemplate("EPUB/content.opf.mustache", "EPUB/content.opf", book),
     compileTemplate(
-      "EPUB/html/nav.xhtml.mustache",
-      "EPUB/html/nav.xhtml",
+      "EPUB/html/nav.html.mustache",
+      "EPUB/html/nav.html",
       book,
     ),
     book.index.map((item) =>
       compileTemplate(
-        "EPUB/html/body.xhtml.mustache",
-        `EPUB/html/${item.id}.xhtml`,
+        "EPUB/html/body.html.mustache",
+        `EPUB/html/${item.id}.html`,
         item,
       )
     ),
@@ -152,6 +152,7 @@ fs.promises.mkdir(
   dirname(manifest.output ?? `${manifest.title}.epub`),
   { recursive: true },
 );
+
 rfs.writeFileSync(
   manifest.output ?? `${manifest.title}.epub`,
   new Uint8Array(ab),
