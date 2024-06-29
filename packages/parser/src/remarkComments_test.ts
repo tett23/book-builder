@@ -1,14 +1,19 @@
 import { assertEquals } from "https://deno.land/std@0.204.0/assert/mod.ts";
 import { parser } from "./mod.ts";
 
-Deno.test(async function remarkComments() {
-  assertEquals(
-    await parser(`
+Deno.test(
+  {
+    name: "remarkComments",
+    fn: async () => {
+      assertEquals(
+        await parser(`
 before%%comment%%after
 `),
-    "<p>beforeafter</p>",
-  );
-});
+        "<p>beforeafter</p>",
+      );
+    },
+  },
+);
 
 Deno.test(async function remarkComments() {
   assertEquals(
@@ -61,5 +66,23 @@ Deno.test(async function remarkComments() {
 before%%comment\n*em*\ncomment%%after
 `),
     "<p>beforeafter</p>",
+  );
+});
+
+Deno.test(async function remarkComments() {
+  assertEquals(
+    await parser(`
+%%comment%%%%comment%%
+`),
+    "",
+  );
+});
+
+Deno.test(async function remarkComments() {
+  assertEquals(
+    await parser(`
+%%comment%%a%%comment%%
+`),
+    "<p>a</p>",
   );
 });

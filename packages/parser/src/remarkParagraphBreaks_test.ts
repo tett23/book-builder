@@ -28,7 +28,7 @@ Deno.test(async function remarkParagraphBreask() {
   );
 });
 
-Deno.test(async function remarkParagraphBreask() {
+Deno.test(async function remarkParagraphBreask2() {
   assertEquals(
     await parser(`*em*`),
     "<p><em>em</em></p>",
@@ -55,7 +55,6 @@ Deno.test(async function remarkParagraphBreask() {
   assertEquals(
     await parser(`
 1
-
 
 2
 `),

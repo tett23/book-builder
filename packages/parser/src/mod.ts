@@ -3,8 +3,10 @@ import remarkParse from "npm:remark-parse@11.0.0";
 import remarkGfm from "npm:remark-gfm@4.0.0";
 import remarkRehype from "npm:remark-rehype@11.1.0";
 import rehypeStringify from "npm:rehype-stringify@10.0.0";
+import { remove } from "npm:unist-util-remove@4";
 import { remarkParagraphBreaks } from "./remarkParagraphBreaks.ts";
 import { remarkComments } from "./remarkComments.ts";
+import { Root } from "npm:@types/mdast@4.0.0";
 
 export async function parser(source: string): Promise<string> {
   const file = await unified()
@@ -12,16 +14,33 @@ export async function parser(source: string): Promise<string> {
     .use(remarkGfm)
     .use(remarkComments)
     .use(remarkParagraphBreaks)
-    .use(remarkRehype, {
-      handlers: {
-        comment: (_: unknown, node: unknown) => {
-          console.log(node);
-          return undefined;
-        },
-      } as never,
-    })
-    .use(rehypeStringify, { closeSelfClosing: true })
+    .use(remarkRemoeEmpty)
+    .use(remarkRehype)
+    .use(
+      rehypeStringify,
+      { closeSelfClosing: true },
+    )
     .process(source);
 
   return file.toString();
+}
+
+function remarkRemoeEmpty() {
+  return (root: Root) => {
+    remove(
+      root,
+      // deno-lint-ignore no-explicit-any
+      ((node: any) => node.value != null && node.value === "") as never,
+    );
+    remove(
+      root,
+      // deno-lint-ignore no-explicit-any
+      (node: any) => node.type === "comment",
+    );
+    remove(
+      root,
+      // deno-lint-ignore no-explicit-any
+      (node: any) => node.type === "paragraph" && node.children.length === 0,
+    );
+  };
 }

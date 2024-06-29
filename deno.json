@@ -8,6 +8,27 @@
     "@nfnitloop/deno-embedder": "jsr:@nfnitloop/deno-embedder",
     "handlebars": "npm:handlebars@^4.7.8",
     "@types/node": "https://deno.land/std/node/index.d.ts",
-    "zod": "https://deno.land/x/zod@v3.16.1/mod.ts"
+    "zod": "https://deno.land/x/zod@v3.16.1/mod.ts",
+    "unist-util-is": "https://esm.sh/unist-util-is@6",
+    "unist-builder": "https://esm.sh/unist-builder@4",
+    "unist-util-map": "https://esm.sh/unist-util-map@4",
+    "unist-util-visit": "https://esm.sh/unist-util-visit@5"
+  },
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true
   }
 }

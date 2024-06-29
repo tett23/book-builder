@@ -1,5 +1,10 @@
-import { PhrasingContent, Root, RootContent } from "npm:@types/mdast@4.0.0";
-import { remove } from "npm:unist-util-remove@4";
+import type {
+  PhrasingContent,
+  Root,
+  RootContent,
+} from "npm:@types/mdast@4.0.0";
+import { is } from "unist-util-is";
+import { u } from "unist-builder";
 
 export function remarkComments() {
   return (root: Root): Root => {
@@ -18,75 +23,74 @@ function inlineComment(root: Root): Root {
           return node;
         }
 
-        return { type: "paragraph", children: eat(node.children, []) as never };
+        return {
+          type: "paragraph",
+          children: reduceComment(
+            { stack: [], isComment: false },
+            splitAtCommentDelimiter(node.children),
+          ) as never,
+        };
       },
     ),
   };
 
-  remove(
-    newRoot as never,
-    // deno-lint-ignore no-explicit-any
-    ((node: any) => node.value != null && node.value === "") as never,
-  );
-  remove(
-    newRoot as never,
-    // deno-lint-ignore no-explicit-any
-    (node: any) => node.type === "paragraph" && node.children.length === 0,
-  );
-
   return newRoot;
 }
 
-function eat(
+type CommentFragment = { type: "commentFragment" };
+type Comment = { type: "comment"; children: PhrasingContent[] };
+
+function splitAtCommentDelimiter(
   nodes: PhrasingContent[],
-  stack: Array<
-    PhrasingContent
-  >,
 ): Array<
-  PhrasingContent | { type: "comment"; children: PhrasingContent[] }
+  PhrasingContent | CommentFragment
 > {
+  const [node, ...tail] = nodes;
+  if (node == null) {
+    return [];
+  }
+
+  if (!is(node, "text") || node.value === "") {
+    return [node, ...splitAtCommentDelimiter(tail)];
+  }
+
+  const current = node.value.split(Delimiter).reduce(
+    (acc: Array<PhrasingContent | CommentFragment>, item) => {
+      acc.push(u("text", { value: item }));
+      acc.push(u("commentFragment"));
+      return acc;
+    },
+    [],
+  );
+
+  return [...current.slice(0, -1), ...splitAtCommentDelimiter(tail)];
+}
+
+type State = { stack: PhrasingContent[]; isComment: boolean };
+
+function reduceComment(
+  { isComment, stack }: State,
+  nodes: Array<PhrasingContent | CommentFragment>,
+): Array<PhrasingContent | Comment> {
   if (nodes.length === 0) {
     return stack;
   }
 
-  const [head, ...tail] = nodes;
-  if (head.type !== "text") {
-    return eat(tail, [...stack, head]);
+  const [node, ...tail] = nodes;
+  if (node == null) {
+    return [];
   }
-  if (head.value === "") {
-    return eat(tail, stack);
-  }
-
-  const [before, comment, ...after] =
-    ((): [string | undefined, string | undefined, ...string[]] => {
-      if (stack.length === 0) {
-        return head.value.split(Delimiter) as never;
-      }
-      const [comment, ...after] = head.value.split(Delimiter);
-      return [undefined, comment, ...after];
-    })();
-  const rest = [
-    { type: "text" as const, value: after.filter(Boolean).join(Delimiter) },
-    ...tail,
-  ].filter(
-    (node) => !(node.type === "text" && node.value === ""),
-  );
-
-  if (stack.length !== 0 && comment == null) {
+  if (node.type === "commentFragment" && isComment) {
     return [
-      { type: "text", value: before ?? "" },
-      { type: "comment", children: stack },
-      ...eat(rest, []),
+      u("comment", { children: stack }),
+      ...reduceComment({ isComment: false, stack: [] }, tail),
     ];
   }
-  if (comment != null) {
-    return [
-      { type: "text", value: before ?? "" },
-      ...eat(rest, [{ type: "text", value: comment }]),
-    ];
+  if (node.type === "commentFragment") {
+    return reduceComment({ isComment: true, stack: [] }, tail);
   }
 
-  return [
-    ...eat(rest, [...stack, { type: "text", value: before ?? "" }]),
-  ];
+  return isComment
+    ? reduceComment({ isComment, stack: [node, ...stack] }, tail)
+    : [node, ...reduceComment({ isComment, stack }, tail)];
 }
