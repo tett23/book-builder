@@ -40,3 +40,5 @@ fs.writeFileSync(
   manifest.output ?? `${manifest.title}.epub`,
   new Uint8Array(await file.arrayBuffer()),
 );
+
+Deno.exit(0);
